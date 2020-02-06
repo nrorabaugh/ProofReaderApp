@@ -17,9 +17,9 @@ public class AssignmentDao {
         assignments = new HashMap<Integer, Assignment>() {
             {
                 put(1, new Assignment(1,
-                        "Name",
+                        "Assignment Name",
                         "Ass description",
-                        123123
+                        1
                 ));
             }
         };
