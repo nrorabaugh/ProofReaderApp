@@ -16,7 +16,7 @@ export default class Classview extends Component {
         this.setState({user})
         Axios.get(`/classrooms/${user.classId}`)
         .then((res) => {
-            this.setState({classData: res.data})
+            this.setState({classData: res.data[0]})
             localStorage.setItem("currentClass", res.data)
         })
         Axios.get(`/assignments/class/${user.classId}`)

@@ -1,100 +1,149 @@
 package com.proofreader.server.Dao;
 
+import com.proofreader.server.Entity.Assignment;
 import com.proofreader.server.Entity.Solution;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class SolutionDao {
-    public static Map<Integer, Solution> solutions;
 
-    static {
-        solutions = new HashMap<Integer, Solution>() {
-            {
-                put(1, new Solution(false,
-                        1,
-                        1,
-                        1,
-                        1,
-                        "This is user1's a1q1 solution"
-                ));
-                put(2, new Solution(false,
-                        1,
-                        2,
-                        1,
-                        2,
-                        "This is user1's a2q1 solution"
-                ));
-                put(3, new Solution(false,
-                        2,
-                        1,
-                        3,
-                        3,
-                        "This is user3's a1q2 solution"
-                ));
-            }
-        };
+    private final JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    public SolutionDao(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Collection<Solution> getAllSolutions() {
-        return solutions.values();
+    public List<Solution> getAllSolutions(){
+        String sql = "" +
+                "SELECT " +
+                " id, " +
+                " questionId, " +
+                " assignmentId, " +
+                " userId, " +
+                " content, " +
+                " correct " +
+                "FROM solution" ;
+
+        return jdbcTemplate.query(sql, mapSolutionFromDb());
     }
 
-    public Solution getSolutionById(int id) { return solutions.get(id); }
-
-    public Collection<Solution> getSolutionsByStudent(int userId) {
-        Collection<Solution> solutionsRaw = solutions.values();
-        Collection<Solution> solutionsParse = new LinkedList<Solution>();
-        for(Solution i : solutionsRaw ) {
-            if(i.getUserId() == userId) {
-                solutionsParse.add(i);
-            }
-        }
-        return solutionsParse;
+    private RowMapper<Solution> mapSolutionFromDb() {
+        return (resultSet, i) ->
+                new Solution(
+                        resultSet.getInt("id"),
+                        resultSet.getInt("questionId"),
+                        resultSet.getInt("assignmentId"),
+                        resultSet.getInt("userId"),
+                        resultSet.getString("content"),
+                        resultSet.getBoolean("correct")
+                );
     }
 
-    public Collection<Solution> getSolutionsByQuestion(int questionId) {
-        Collection<Solution> solutionsRaw = solutions.values();
-        Collection<Solution> solutionsParse = new LinkedList<Solution>();
-        for(Solution i : solutionsRaw ) {
-            if(i.getQuestionId() == questionId) {
-                solutionsParse.add(i);
-            }
-        }
-        return solutionsParse;
+    public List<Solution> getSolutionById(int id) {
+        String sql = "" +
+                "SELECT " +
+                " id, " +
+                " questionId, " +
+                " assignmentId, " +
+                " userId, " +
+                " content, " +
+                " correct " +
+                " FROM solution " +
+                " WHERE id = ?";
+        return jdbcTemplate.query(sql, mapSolutionFromDb(), id);
     }
 
-    public Collection<Solution> getSolutionsByAssignment(int assignmentId) {
-        Collection<Solution> solutionsRaw = solutions.values();
-        Collection<Solution> solutionsParse = new LinkedList<Solution>();
-        for(Solution i : solutionsRaw ) {
-            if(i.getAssignmentId() == assignmentId) {
-                solutionsParse.add(i);
-            }
-        }
-        return solutionsParse;
+    public List<Solution> getSolutionsByStudent(int userId) {
+        String sql = "" +
+                "SELECT " +
+                " id, " +
+                " questionId, " +
+                " assignmentId, " +
+                " userId, " +
+                " content, " +
+                " correct " +
+                " FROM solution " +
+                " WHERE userId = ?";
+
+        return jdbcTemplate.query(sql, mapSolutionFromDb(), userId);
     }
 
-    public void deleteSolutionById(int id) {
-        solutions.remove(id);
+    public List<Solution> getSolutionsByQuestion(int questionId) {
+        String sql = "" +
+                "SELECT " +
+                " id, " +
+                " questionId, " +
+                " assignmentId, " +
+                " userId, " +
+                " content, " +
+                " correct " +
+                " FROM solution " +
+                " WHERE questionId = ?";
+
+        return jdbcTemplate.query(sql, mapSolutionFromDb(), questionId);
     }
 
-    public void updateSolutionById(Solution solution) {
-        Solution solutionToUpdate = solutions.get(solution.getId());
-        solutionToUpdate.setCorrect(solution.isCorrect());
-        solutionToUpdate.setAssignmentId(solution.getAssignmentId());
-        solutionToUpdate.setContent(solution.getContent());
-        solutionToUpdate.setQuestionId(solution.getQuestionId());
-        solutionToUpdate.setUserId(solution.getUserId());
-        solutionToUpdate.setContent(solution.getContent());
-        solutions.put(solution.getId(), solution);
+    public List<Solution> getSolutionsByAssignment(int assignmentId) {
+        String sql = "" +
+                "SELECT " +
+                " id, " +
+                " questionId, " +
+                " assignmentId, " +
+                " userId, " +
+                " content, " +
+                " correct " +
+                " FROM solution " +
+                " WHERE assignmentId = ?";
+
+        return jdbcTemplate.query(sql, mapSolutionFromDb(), assignmentId);
     }
 
-    public void addSolution(Solution solution) {
-        solutions.put(solution.getId(), solution);
+    public int deleteSolutionById(int id) {
+        String sql = "" +
+            "DELETE FROM solution " +
+            "WHERE id = ?";
+        return jdbcTemplate.update(sql, id);
+    }
+
+    public int updateSolutionById(Solution solution) {
+        String sql = "" +
+                "UPDATE solution " +
+                "SET questionId = ? " +
+                ",assignmentId = ?" +
+                ",userId = ?" +
+                ",content = ?" +
+                ",correct = ?" +
+                "WHERE id = ?";
+        return jdbcTemplate.update(sql,
+                solution.getQuestionId(),
+                solution.getAssignmentId(),
+                solution.getUserId(),
+                solution.getContent(),
+                solution.isCorrect()
+        );
+    }
+
+    public int addSolution(Solution solution) {
+        String sql = "" +
+                "INSERT INTO solution (" +
+                " questionId, " +
+                " assignmentId, " +
+                " userId, " +
+                " content, " +
+                " correct)" +
+                "VALUES (?, ?, ?, ?, ?)";
+        return jdbcTemplate.update(sql,
+                solution.getQuestionId(),
+                solution.getAssignmentId(),
+                solution.getUserId(),
+                solution.getContent(),
+                solution.isCorrect()
+        );
     }
 }

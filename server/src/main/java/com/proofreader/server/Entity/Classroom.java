@@ -5,14 +5,13 @@ public class Classroom {
     private int teacherId;
     private String name;
 
-    public Classroom(int id, String name, int teacherId) {
+    public Classroom(int id, int teacherId, String name) {
         this.id = id;
         this.name = name;
         this.teacherId = teacherId;
     }
 
     public Classroom() {}
-
 
     public int getId() {
         return id;

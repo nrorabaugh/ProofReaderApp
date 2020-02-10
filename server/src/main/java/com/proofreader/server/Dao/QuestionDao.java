@@ -1,67 +1,114 @@
 package com.proofreader.server.Dao;
 
+import com.proofreader.server.Entity.Assignment;
 import com.proofreader.server.Entity.Question;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class QuestionDao {
 
-    public static Map<Integer, Question> questions;
+    private final JdbcTemplate jdbcTemplate;
 
-    static {
-        questions = new HashMap<Integer, Question>() {
-            {
-                put(1, new Question(
-                        "This is an algebra question", 1, 1, "x^2 + 2x + 1", 1
-                ));
-                put(2, new Question(
-                        "This is an algebra question", 2, 2, "x^2 + 3x + 6", 1
-                ));
-                put(3, new Question(
-                        "This is an algebra question", 3, 3, "x^2 + 3x + 8", 1
-                ));
-            }
-        };
+    @Autowired
+    public QuestionDao(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Collection<Question> getAllQuestions() {
-        return questions.values();
+    public List<Question> getAllQuestions(){
+        String sql = "" +
+                "SELECT " +
+                " id, " +
+                " assignmentId, " +
+                " number, " +
+                " content, " +
+                " solution " +
+                "FROM question" ;
+
+        return jdbcTemplate.query(sql, mapQuestionFromDb());
     }
 
-    public Question getQuestionById(int id) { return questions.get(id); }
-
-    public Collection<Question> getQuestionsByAssignment(int assignmentId) {
-        Collection<Question> questionsRaw = questions.values();
-        Collection<Question> questionsParse = new LinkedList<Question>();
-        for(Question i : questionsRaw ) {
-            if(i.getAssignmentId() == assignmentId) {
-                questionsParse.add(i);
-            }
-        }
-        return questionsParse;
+    private RowMapper<Question> mapQuestionFromDb() {
+        return (resultSet, i) ->
+                new Question(
+                        resultSet.getInt("id"),
+                        resultSet.getInt("assignmentId"),
+                        resultSet.getInt("number"),
+                        resultSet.getString("content"),
+                        resultSet.getString("solution")
+                );
     }
 
-    public void deleteQuestionById(int id) {
-        questions.remove(id);
+    public List<Question> getQuestionById(int id) {
+        String sql = "" +
+                "SELECT " +
+                " id, " +
+                " assignmentId, " +
+                " number, " +
+                " content, " +
+                " solution " +
+                " FROM question " +
+                " WHERE id = ?";
+        return jdbcTemplate.query(sql, mapQuestionFromDb(), id);
     }
 
-    public void updateQuestionById(Question question) {
-        Question questionToUpdate = questions.get(question.getId());
-        questionToUpdate.setAssignmentId(question.getAssignmentId());
-        questionToUpdate.setContent(question.getContent());
-        questionToUpdate.setId(question.getId());
-        questionToUpdate.setNumber(question.getNumber());
-        question.setSolution(question.getSolution());
-        questions.put(question.getId(), question);
+    public List<Question> getQuestionsByAssignment(int assignmentId) {
+        String sql = "" +
+                "SELECT " +
+                " id, " +
+                " assignmentId, " +
+                " number, " +
+                " content, " +
+                " solution " +
+                " FROM question " +
+                " WHERE assignmentId = ?";
+
+        return jdbcTemplate.query(sql, mapQuestionFromDb(), assignmentId);
     }
 
-    public void addQuestion(Question assignment) {
-        questions.put(assignment.getId(), assignment);
+    public int deleteQuestionById(int id) {
+        String sql = "" +
+                "DELETE FROM question " +
+                "WHERE id = ?";
+        return jdbcTemplate.update(sql, id);
+    }
+
+    public int updateQuestionById(Question question) {
+        String sql = "" +
+                "UPDATE question " +
+                "SET assignmentId = ? " +
+                ",number = ?" +
+                ",content = ?" +
+                ",solution = ?" +
+                "WHERE id = ?";
+        return jdbcTemplate.update(sql,
+                question.getAssignmentId(),
+                question.getNumber(),
+                question.getContent(),
+                question.getSolution(),
+                question.getId()
+        );
+    }
+
+    public int addQuestion(Question question) {
+        String sql = "" +
+                "INSERT INTO question (" +
+                " assignmentId, " +
+                " number, " +
+                " content, " +
+                " solution) " +
+                "VALUES (?, ?, ?, ?)";
+        return jdbcTemplate.update(sql,
+                question.getAssignmentId(),
+                question.getNumber(),
+                question.getContent(),
+                question.getSolution()
+        );
     }
 }
 

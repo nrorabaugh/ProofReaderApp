@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("/solutions")
@@ -21,7 +22,7 @@ public class SolutionController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public Solution getSolution(@PathVariable("id") int id) {
+    public List<Solution> getSolution(@PathVariable("id") int id) {
         return solutionService.getSolutionById(id);
     }
 

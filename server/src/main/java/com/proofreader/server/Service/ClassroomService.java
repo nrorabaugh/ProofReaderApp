@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.List;
 
 @Service
 public class ClassroomService {
@@ -13,23 +14,23 @@ public class ClassroomService {
     @Autowired
     private ClassroomDao dao;
 
-    public Collection<Classroom> getAllMessages() {
+    public List<Classroom> getAllClassrooms() {
         return this.dao.getAllClassrooms();
     }
 
-    public Classroom getMessageById(int id) {
+    public List<Classroom> getClassroomById(int id) {
         return this.dao.getClassroomById(id);
     }
 
-    public void deleteMessageById(int id) {
+    public void deleteClassroomById(int id) {
         this.dao.deleteClassroomById(id);
     }
 
-    public void updateMessageById(Classroom classroom) {
+    public void updateClassroomById(Classroom classroom) {
         this.dao.updateClassroomById(classroom);
     }
 
-    public void addMessage(Classroom classroom) {
+    public void addClassroom(Classroom classroom) {
         this.dao.addClassroom(classroom);
     }
 }

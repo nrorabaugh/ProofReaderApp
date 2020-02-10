@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("/calculations")
@@ -16,17 +17,17 @@ public class CalculationController {
     private CalculationService calculationService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public Collection<Calculation> getAllCalculations() {
+    public List<Calculation> getAllCalculations() {
         return calculationService.getAllCalculations();
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public Calculation getCalculation(@PathVariable("id") int id) {
+    public List<Calculation> getCalculation(@PathVariable("id") int id) {
         return calculationService.getCalculationById(id);
     }
 
     @RequestMapping(value = "/solution/{id}", method = RequestMethod.GET)
-    public Collection<Calculation> getCalculationsBySolution(@PathVariable("id") int solutionId) {
+    public List<Calculation> getCalculationsBySolution(@PathVariable("id") int solutionId) {
         return calculationService.getCalculationsBySolution(solutionId);
     }
 

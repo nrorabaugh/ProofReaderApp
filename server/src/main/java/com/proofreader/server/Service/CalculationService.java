@@ -5,7 +5,7 @@ import com.proofreader.server.Entity.Calculation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
+import java.util.List;
 
 @Service
 public class CalculationService {
@@ -13,15 +13,15 @@ public class CalculationService {
     @Autowired
     private CalculationDao dao;
 
-    public Collection<Calculation> getAllCalculations() {
+    public List<Calculation> getAllCalculations() {
         return this.dao.getAllCalculations();
     }
 
-    public Calculation getCalculationById(int id) {
+    public List<Calculation> getCalculationById(int id) {
         return this.dao.getCalculationById(id);
     }
 
-    public Collection<Calculation> getCalculationsBySolution(int solutionId) { return this.dao.getCalculationsBySolution(solutionId); }
+    public List<Calculation> getCalculationsBySolution(int solutionId) { return this.dao.getCalculationsBySolution(solutionId); }
 
     public void deleteCalculationById(int id) {
         this.dao.deleteCalculationById(id);

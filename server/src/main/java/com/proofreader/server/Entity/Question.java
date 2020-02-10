@@ -7,12 +7,12 @@ public class Question {
     private String solution;
     private int assignmentId;
 
-    public Question(String content, int id, int number, String solution, int assignmentId) {
-        this.content = content;
-        this.number = number;
-        this.solution = solution;
+    public Question(int id, int assignmentId, int number, String content, String solution) {
         this.id = id;
         this.assignmentId = assignmentId;
+        this.number = number;
+        this.content = content;
+        this.solution = solution;
     }
 
     public Question() {}

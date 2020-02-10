@@ -1,59 +1,103 @@
 package com.proofreader.server.Dao;
 
 import com.proofreader.server.Entity.Assignment;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class AssignmentDao {
 
-    public static Map<Integer, Assignment> assignments;
+    private final JdbcTemplate jdbcTemplate;
 
-    static {
-        assignments = new HashMap<Integer, Assignment>() {
-            {
-                put(1, new Assignment(1,
-                        "Assignment Name",
-                        "Ass description",
-                        1
-                ));
-            }
-        };
+    @Autowired
+    public AssignmentDao(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Collection<Assignment> getAllAssignments() {
-        return assignments.values();
+    public List<Assignment> getAllAssignments(){
+        String sql = "" +
+                "SELECT " +
+                " id, " +
+                " classId, " +
+                " name, " +
+                " description " +
+                "FROM assignment" ;
+
+        return jdbcTemplate.query(sql, mapAssignmentFromDb());
     }
 
-    public Assignment getAssignmentById(int id) { return assignments.get(id); }
-
-    public Collection<Assignment> getAssignmentsByClass(int classId) {
-        Collection<Assignment> assignmentsRaw = assignments.values();
-        Collection<Assignment> assignmentsParse = new LinkedList<Assignment>();
-        for(Assignment i : assignmentsRaw ) {
-            if(i.getClassId() == classId) {
-                assignmentsParse.add(i);
-            }
-        }
-        return assignmentsParse;
+    private RowMapper<Assignment> mapAssignmentFromDb() {
+        return (resultSet, i) ->
+                new Assignment(
+                        resultSet.getInt("id"),
+                        resultSet.getInt("classId"),
+                        resultSet.getString("name"),
+                        resultSet.getString("description")
+                );
     }
 
-    public void deleteAssignmentById(int id) {
-        assignments.remove(id);
+    public List<Assignment> getAssignmentById(int id) {
+        String sql = "" +
+                "SELECT " +
+                " id, " +
+                " classId, " +
+                " name, " +
+                " description " +
+                " FROM assignment " +
+                " WHERE id = ?";
+        return jdbcTemplate.query(sql, mapAssignmentFromDb(), id);
     }
 
-    public void updateAssignmentById(Assignment assignment) {
-        Assignment assignmentToUpdate = assignments.get(assignment.getId());
-        assignmentToUpdate.setClassId(assignment.getClassId());
-        assignmentToUpdate.setDescription(assignment.getDescription());
-        assignments.put(assignment.getId(), assignment);
+    public List<Assignment> getAssignmentsByClass(int classId) {
+        String sql = "" +
+                "SELECT " +
+                " id, " +
+                " classId, " +
+                " name, " +
+                " description " +
+                " FROM assignment " +
+                " WHERE classId = ?";
+
+        return jdbcTemplate.query(sql, mapAssignmentFromDb(), classId);
     }
 
-    public void addAssignment(Assignment assignment) {
-        assignments.put(assignment.getId(), assignment);
+    public int deleteAssignmentById(int id) {
+        String sql = "" +
+                "DELETE FROM assignment " +
+                "WHERE id = ?";
+        return jdbcTemplate.update(sql, id);
+    }
+
+    public int updateAssignmentById(Assignment assignment) {
+        String sql = "" +
+                "UPDATE assignment " +
+                "SET classId = ? " +
+                ",name = ?" +
+                ",description = ?" +
+                "WHERE id = ?";
+        return jdbcTemplate.update(sql,
+                assignment.getClassId(),
+                assignment.getName(),
+                assignment.getDescription(),
+                assignment.getId()
+                );
+    }
+
+    public int addAssignment(Assignment assignment) {
+        String sql = "" +
+                "INSERT INTO assignment (" +
+                " classId, " +
+                " name, " +
+                " description) " +
+                "VALUES (?, ?, ?)";
+        return jdbcTemplate.update(sql,
+                assignment.getClassId(),
+                assignment.getName(),
+                assignment.getDescription()
+        );
     }
 }

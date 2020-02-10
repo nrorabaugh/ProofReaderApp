@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("/assignments")
@@ -16,17 +17,17 @@ public class AssignmentController {
     private AssignmentService assignmentService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public Collection<Assignment> getAllAssignments() {
+    public List<Assignment> getAllAssignments() {
         return assignmentService.getAllAssignments();
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public Assignment getAssignmentById(@PathVariable("id") int id) {
+    public List<Assignment> getAssignmentById(@PathVariable("id") int id) {
         return assignmentService.getAssignmentById(id);
     }
 
     @RequestMapping(value = "/class/{id}", method = RequestMethod.GET)
-    public Collection<Assignment> getAssignmentsByClass(@PathVariable("id") int id) {
+    public List<Assignment> getAssignmentsByClass(@PathVariable("id") int id) {
         return assignmentService.getAssignmentsByClass(id);
     }
 
@@ -39,11 +40,6 @@ public class AssignmentController {
     public void updateAssignmentById(@RequestBody Assignment assignment) {
         assignmentService.updateAssignmentById(assignment);
     }
-
-//    @RequestMapping(value = "/messages", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-//    public void addMessage(@RequestBody Assignment.Message message) {
-//        assignmentService.addMessage(message);
-//    }
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public void addAssignment(@RequestBody Assignment assignment){

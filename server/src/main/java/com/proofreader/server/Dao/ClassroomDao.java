@@ -1,47 +1,86 @@
 package com.proofreader.server.Dao;
 
+import com.proofreader.server.Entity.Assignment;
 import com.proofreader.server.Entity.Classroom;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+
 
 @Repository
 public class ClassroomDao {
 
-    public static Map<Integer, Classroom> classrooms;
+    private final JdbcTemplate jdbcTemplate;
 
-    static {
-        classrooms = new HashMap<Integer, Classroom>() {
-            {
-                put(1, new Classroom(1, "Class1", 1));
-                put(2, new Classroom(2,"Class2", 1));
-                put(3, new Classroom(3, "Class3", 1));
-                put(4, new Classroom(4, "Class4", 1));
-            }
-        };
-    }
-    public Collection<Classroom> getAllClassrooms() {
-        return this.classrooms.values();
+    @Autowired
+    public ClassroomDao(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Classroom getClassroomById(int id) {
-        return this.classrooms.get(id);
+    public List<Classroom> getAllClassrooms() {
+        String sql = "" +
+                "SELECT " +
+                " id, " +
+                " teacherId, " +
+                " name " +
+                "FROM classroom" ;
+
+        return jdbcTemplate.query(sql, mapClassroomFromDb());
     }
 
-    public void deleteClassroomById(int id) {
-        this.classrooms.remove(id);
+    private RowMapper<Classroom> mapClassroomFromDb() {
+        return (resultSet, i) ->
+                new Classroom(
+                        resultSet.getInt("id"),
+                        resultSet.getInt("teacherId"),
+                        resultSet.getString("name")
+                );
     }
 
-    public void updateClassroomById(Classroom classroom) {
-        Classroom classToUpdate = classrooms.get(classroom.getId());
-        classToUpdate.setTeacherId(classroom.getTeacherId());
-        classToUpdate.setName(classroom.getName());
-        classrooms.put(classroom.getId(), classroom);
+    public List<Classroom> getClassroomById(int id) {
+        String sql = "" +
+                "SELECT " +
+                " id, " +
+                " teacherId, " +
+                " name " +
+                " FROM classroom " +
+                " WHERE id = ?";
+        return jdbcTemplate.query(sql, mapClassroomFromDb(), id);
     }
 
-    public void addClassroom(Classroom classroom) {
-        classrooms.put(classroom.getId(), classroom);
+    public int deleteClassroomById(int id) {
+        String sql = "" +
+                "DELETE FROM classroom " +
+                "WHERE id = ?";
+        return jdbcTemplate.update(sql, id);
+    }
+
+    public int updateClassroomById(Classroom classroom) {
+        String sql = "" +
+                "UPDATE classroom " +
+                "SET teacherId = ? " +
+                ",name = ?" +
+                "WHERE id = ?";
+        return jdbcTemplate.update(sql,
+                classroom.getTeacherId(),
+                classroom.getName(),
+                classroom.getId()
+        );
+    }
+
+    public int addClassroom(Classroom classroom) {
+        String sql = "" +
+                "INSERT INTO classroom (" +
+                " teacherId, " +
+                " name) " +
+                "VALUES (?, ?)";
+        return jdbcTemplate.update(sql,
+                classroom.getTeacherId(),
+                classroom.getName()
+        );
     }
 }

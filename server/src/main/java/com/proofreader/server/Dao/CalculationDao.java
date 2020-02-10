@@ -1,63 +1,100 @@
 package com.proofreader.server.Dao;
 
 import com.proofreader.server.Entity.Calculation;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class CalculationDao {
 
-    public static Map<Integer, Calculation> calculations;
+    private final JdbcTemplate jdbcTemplate;
 
-    static {
-        calculations = new HashMap<Integer, Calculation>() {
-            {
-                put(1, new Calculation("x*y", "multiply", 1, 1, 1));
-                put(2, new Calculation("x/y", "divide", 1, 2, 2));
-                put(3, new Calculation("x-y", "subtract", 2, 2, 3));
-                put(4, new Calculation("x+y", "add", 2, 1, 4));
-            }
-        };
+    public CalculationDao(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Collection<Calculation> getAllCalculations() {
-        return this.calculations.values();
+    public List<Calculation> getAllCalculations() {
+            String sql = "" +
+                    "SELECT " +
+                    " id, " +
+                    " solutionId, " +
+                    " expression, " +
+                    " comment " +
+                    "FROM calculation" ;
+
+            return jdbcTemplate.query(sql, mapCalculationFromDb());
     }
 
-    public Calculation getCalculationById(int id) {
-        return this.calculations.get(id);
+    private RowMapper<Calculation> mapCalculationFromDb() {
+        return (resultSet, i) ->
+                new Calculation(
+                        resultSet.getInt("id"),
+                        resultSet.getInt("solutionId"),
+                        resultSet.getString("expression"),
+                        resultSet.getString("comment")
+                );
     }
 
-    public Collection<Calculation> getCalculationsBySolution(int solutionId) {
-        Collection<Calculation> calcRaw = calculations.values();
-        Collection<Calculation> calcParse = new LinkedList<Calculation>();
-        for(Calculation i : calcRaw ) {
-            if(i.getSolutionId() == solutionId) {
-                calcParse.add(i);
-            }
-        }
-        return calcParse;
+    public List<Calculation> getCalculationById(int id) {
+            String sql = "" +
+                    "SELECT " +
+                    " id, " +
+                    " solutionId, " +
+                    " expression, " +
+                    " comment " +
+                    " FROM calculation " +
+                    " WHERE id = ?";
+            return jdbcTemplate.query(sql, mapCalculationFromDb(), id);
     }
 
-    public void deleteCalculationById(int id) {
-        this.calculations.remove(id);
+    public List<Calculation> getCalculationsBySolution(int solutionId) {
+        String sql = "" +
+                "SELECT " +
+                " id, " +
+                " solutionId, " +
+                " expression, " +
+                " comment " +
+                " FROM calculation " +
+                " WHERE solutionId = ?";
+        return jdbcTemplate.query(sql, mapCalculationFromDb(), solutionId);
     }
 
-    public void updateCalculationById(Calculation calculation) {
-        Calculation calculationToUpdate = calculations.get(calculation.getId());
-        calculationToUpdate.setComment(calculation.getComment());
-        calculationToUpdate.setExpression(calculation.getExpression());
-        calculationToUpdate.setId(calculation.getId());
-        calculationToUpdate.setSolutionId(calculation.getSolutionId());
-        calculations.put(calculation.getId(), calculation);
+    public int deleteCalculationById(int id) {
+        String sql = "" +
+                "DELETE FROM calculation " +
+                "WHERE id = ?";
+        return jdbcTemplate.update(sql, id);
     }
 
-    public void addCalculation(Calculation calculation) {
-        calculations.put(calculation.getId(), calculation);
+    public int updateCalculationById(Calculation calculation) {
+        String sql = "" +
+                "UPDATE calculation " +
+                "SET solutionId = ? " +
+                ",expression = ?" +
+                ",comment = ?" +
+                "WHERE id = ?";
+        return jdbcTemplate.update(sql,
+                calculation.getSolutionId(),
+                calculation.getExpression(),
+                calculation.getComment(),
+                calculation.getId()
+        );
+    }
 
+    public int addCalculation(Calculation calculation) {
+        String sql = "" +
+                "INSERT INTO calculation (" +
+                " solutionId, " +
+                " expression, " +
+                " comment) " +
+                "VALUES (?, ?, ?)";
+        return jdbcTemplate.update(sql,
+                calculation.getSolutionId(),
+                calculation.getExpression(),
+                calculation.getComment()
+        );
     }
 }

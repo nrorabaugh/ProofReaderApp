@@ -6,11 +6,11 @@ public class Calculation {
     private int solutionId;
     private int id;
 
-    public Calculation(String expression, String comment, int solutionId, int userId, int id) {
+    public Calculation(int id, int solutionId, String expression, String comment) {
+        this.id = id;
+        this.solutionId = solutionId;
         this.expression = expression;
         this.comment = comment;
-        this.solutionId = solutionId;
-        this.id = id;
     };
 
     public Calculation(){};

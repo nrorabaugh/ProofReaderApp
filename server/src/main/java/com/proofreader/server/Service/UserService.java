@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -13,11 +14,11 @@ public class UserService {
     @Autowired
     private UserDao userDao;
 
-    public Collection<User> getAllUsers() {
+    public List<User> getAllUsers() {
         return this.userDao.getAllUsers();
     }
 
-    public User getUserById(int id) {
+    public List<User> getUserById(int id) {
         return this.userDao.getUserById(id);
     }
 

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.List;
 
 @Service
 public class SolutionService {
@@ -13,19 +14,19 @@ public class SolutionService {
     @Autowired
     private SolutionDao dao;
 
-    public Collection<Solution> getAllSolutions() {
+    public List<Solution> getAllSolutions() {
         return this.dao.getAllSolutions();
     }
 
-    public Solution getSolutionById(int id) {
+    public List<Solution> getSolutionById(int id) {
         return this.dao.getSolutionById(id);
     }
 
-    public Collection<Solution> getSolutionsByAssignment(int assignmentId) { return this.dao.getSolutionsByAssignment(assignmentId); }
+    public List<Solution> getSolutionsByAssignment(int assignmentId) { return this.dao.getSolutionsByAssignment(assignmentId); }
 
-    public Collection<Solution> getSolutionsByStudent(int userId) { return this.dao.getSolutionsByStudent(userId); }
+    public List<Solution> getSolutionsByStudent(int userId) { return this.dao.getSolutionsByStudent(userId); }
 
-    public Collection<Solution> getSolutionsByQuestion(int questionId) { return this.dao.getSolutionsByQuestion(questionId); }
+    public List<Solution> getSolutionsByQuestion(int questionId) { return this.dao.getSolutionsByQuestion(questionId); }
 
     public void deleteSolutionById(int id) {
         this.dao.deleteSolutionById(id);

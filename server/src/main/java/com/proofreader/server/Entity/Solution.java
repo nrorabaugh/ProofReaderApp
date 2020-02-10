@@ -8,13 +8,13 @@ public class Solution {
     private int id;
     private String content;
 
-    public Solution(boolean correct, int questionId, int assignmentId, int userId, int id, String content) {
-        this.correct = correct;
+    public Solution(int id, int questionId, int assignmentId, int userId, String content, boolean correct) {
+        this.id = id;
         this.questionId = questionId;
         this.assignmentId = assignmentId;
         this.userId = userId;
-        this.id = id;
         this.content = content;
+        this.correct = correct;
     }
 
     public boolean isCorrect() {

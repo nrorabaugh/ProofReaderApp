@@ -2,75 +2,16 @@ package com.proofreader.server.Entity;
 
 public class Assignment {
         private int id;
-        private String name;
         private int classId;
+        private String name;
         private String description;
 
-        public Assignment(int id, String name, String description, int classId) {
+        public Assignment(int id, int classId, String name, String description) {
             this.id = id;
+            this.classId = classId;
             this.name = name;
             this.description = description;
-            this.classId = classId;
         }
-
-//    public static class Message {
-//        private int id;
-//        private int senderId;
-//        private String content;
-//        private int assignmentId;
-//        private String eq;
-//
-//        public Message(int id, int senderId, String content, int assignmentId, String eq) {
-//            this.id = id;
-//            this.senderId = senderId;
-//            this.content = content;
-//            this.assignmentId = assignmentId;
-//            this.eq = eq;
-//        }
-//
-////        public Message() {
-////        }
-//
-//        public int getId() {
-//            return id;
-//        }
-//
-//        public void setId(int id) {
-//            this.id = id;
-//        }
-//
-//        public int getSenderId() {
-//            return senderId;
-//        }
-//
-//        public void setSenderId(int senderId) {
-//            this.senderId = senderId;
-//        }
-//
-//        public String getContent() {
-//            return content;
-//        }
-//
-//        public void setContent(String content) {
-//            this.content = content;
-//        }
-//
-//        public int getAssignmentId() {
-//            return assignmentId;
-//        }
-//
-//        public void setAssignmentId(int assignmentId) {
-//            this.assignmentId = assignmentId;
-//        }
-//
-//        public String getEq() {
-//            return eq;
-//        }
-//
-//        public void setEq(String eq) {
-//            this.eq = eq;
-//        }
-//    }
 
         public Assignment() {}
 

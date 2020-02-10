@@ -5,7 +5,7 @@ import com.proofreader.server.Entity.Assignment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
+import java.util.List;
 
 @Service
 public class AssignmentService {
@@ -13,15 +13,15 @@ public class AssignmentService {
     @Autowired
     private AssignmentDao dao;
 
-    public Collection<Assignment> getAllAssignments() {
+    public List<Assignment> getAllAssignments() {
         return this.dao.getAllAssignments();
     }
 
-    public Assignment getAssignmentById(int id) {
+    public List<Assignment> getAssignmentById(int id) {
         return this.dao.getAssignmentById(id);
     }
 
-    public Collection<Assignment> getAssignmentsByClass(int classId) { return this.dao.getAssignmentsByClass(classId); }
+    public List<Assignment> getAssignmentsByClass(int classId) { return this.dao.getAssignmentsByClass(classId); }
 
     public void deleteAssignmentById(int id) {
         this.dao.deleteAssignmentById(id);

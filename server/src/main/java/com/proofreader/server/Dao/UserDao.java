@@ -1,49 +1,101 @@
 package com.proofreader.server.Dao;
 
+import com.proofreader.server.Entity.Assignment;
 import com.proofreader.server.Entity.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Repository
 public class UserDao {
 
-    public static Map<Integer, User> users;
+    private final JdbcTemplate jdbcTemplate;
 
-    static {
-        users = new HashMap<Integer, User>() {
-            {
-                put(1, new User("user1", "111", 1, 1, "teacher"));
-                put(2, new User("user2", "222", 1, 2, "student"));
-                put(3, new User("user3", "333", 1, 3, "student"));
-                put(4, new User("user4", "444", 1, 4, "student"));
-            }
-        };
-    }
-    public Collection<User> getAllUsers() {
-        return users.values();
+    @Autowired
+    public UserDao(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
-    public User getUserById(int id) {
-        return users.get(id);
+    public List<User> getAllUsers(){
+        String sql = "" +
+                "SELECT " +
+                " id, " +
+                " classId, " +
+                " username, " +
+                " password, " +
+                " role " +
+                "FROM users" ;
+
+        return jdbcTemplate.query(sql, mapUserFromDb());
     }
 
-    public void deleteUserById(int id) {
-        users.remove(id);
+    private RowMapper<User> mapUserFromDb() {
+        return (resultSet, i) ->
+                new User(
+                        resultSet.getInt("id"),
+                        resultSet.getInt("classId"),
+                        resultSet.getString("username"),
+                        resultSet.getString("password"),
+                        resultSet.getString("role")
+                );
     }
 
-    public void updateUserById(User user) {
-        User userToUpdate = users.get(user.getId());
-        userToUpdate.setClassId(user.getClassId());
-        userToUpdate.setUsername(user.getUsername());
-        userToUpdate.setPassword(user.getPassword());
-        userToUpdate.setRole(user.getRole());
-        users.put(user.getId(), user);
+    public List<User> getUserById(int id) {
+        String sql = "" +
+                "SELECT " +
+                " id, " +
+                " classId, " +
+                " username, " +
+                " password, " +
+                " role " +
+                " FROM users " +
+                " WHERE id = ?";
+        return jdbcTemplate.query(sql, mapUserFromDb(), id);
     }
 
-    public void addUser(User user) {
-        users.put(user.getId(), user);
+    public int deleteUserById(int id) {
+        String sql = "" +
+                "DELETE FROM users " +
+                "WHERE id = ?";
+        return jdbcTemplate.update(sql, id);
+    }
+
+    public int updateUserById(User user) {
+        String sql = "" +
+                "UPDATE users " +
+                "SET classId = ? " +
+                ",username = ?" +
+                ",password = ?" +
+                ",role = ?" +
+                "WHERE id = ?";
+        return jdbcTemplate.update(sql,
+                user.getClassId(),
+                user.getUsername(),
+                user.getPassword(),
+                user.getRole(),
+                user.getId()
+        );
+    }
+
+    public int addUser(User user) {
+        String sql = "" +
+                "INSERT INTO users (" +
+                " classId, " +
+                " username, " +
+                " password, " +
+                " role) " +
+                "VALUES (?, ?, ?, ?)";
+        return jdbcTemplate.update(sql,
+                user.getClassId(),
+                user.getUsername(),
+                user.getPassword(),
+                user.getRole()
+        );
     }
 }
