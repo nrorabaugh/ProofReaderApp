@@ -10,8 +10,8 @@ public class Message {
     public Message(int id, int senderId, String content, int assignmentId, String eq) {
         this.id = id;
         this.senderId = senderId;
-        this.content = content;
         this.assignmentId = assignmentId;
+        this.content = content;
         this.eq = eq;
     }
 

@@ -3,11 +3,11 @@ package com.proofreader.server.Entity;
 public class User {
     private String username;
     private String password;
-    private String classId;
+    private int classId;
     private int id;
     private String role;
 
-    public User(String username, String password, String classId, int id, String role) {
+    public User(String username, String password, int classId, int id, String role) {
         this.username = username;
         this.password = password;
         this.classId = classId;
@@ -33,11 +33,11 @@ public class User {
         this.password = password;
     }
 
-    public String getClassId() {
+    public int getClassId() {
         return classId;
     }
 
-    public void setClassId(String classId) {
+    public void setClassId(int classId) {
         this.classId = classId;
     }
 

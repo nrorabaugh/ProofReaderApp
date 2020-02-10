@@ -15,23 +15,23 @@ public class UserDao {
     static {
         users = new HashMap<Integer, User>() {
             {
-                put(1, new User("user1", "111", "1", 1, "teacher"));
-                put(2, new User("user2", "222", "1", 2, "student"));
-                put(3, new User("user3", "333", "1", 3, "student"));
-                put(4, new User("user4", "444", "1", 4, "student"));
+                put(1, new User("user1", "111", 1, 1, "teacher"));
+                put(2, new User("user2", "222", 1, 2, "student"));
+                put(3, new User("user3", "333", 1, 3, "student"));
+                put(4, new User("user4", "444", 1, 4, "student"));
             }
         };
     }
     public Collection<User> getAllUsers() {
-        return this.users.values();
+        return users.values();
     }
 
     public User getUserById(int id) {
-        return this.users.get(id);
+        return users.get(id);
     }
 
     public void deleteUserById(int id) {
-        this.users.remove(id);
+        users.remove(id);
     }
 
     public void updateUserById(User user) {

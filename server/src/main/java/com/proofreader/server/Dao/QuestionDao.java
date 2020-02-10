@@ -19,6 +19,12 @@ public class QuestionDao {
                 put(1, new Question(
                         "This is an algebra question", 1, 1, "x^2 + 2x + 1", 1
                 ));
+                put(2, new Question(
+                        "This is an algebra question", 2, 2, "x^2 + 3x + 6", 1
+                ));
+                put(3, new Question(
+                        "This is an algebra question", 3, 3, "x^2 + 3x + 8", 1
+                ));
             }
         };
     }
@@ -58,3 +64,4 @@ public class QuestionDao {
         questions.put(assignment.getId(), assignment);
     }
 }
+

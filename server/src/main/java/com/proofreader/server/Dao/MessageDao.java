@@ -1,61 +1,124 @@
 package com.proofreader.server.Dao;
 
 import com.proofreader.server.Entity.Message;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.List;
 
 @Repository
 public class MessageDao {
 
-    public static Map<Integer, Message> messages;
+    private final JdbcTemplate jdbcTemplate;
 
-    static {
-        messages = new HashMap<Integer, Message>() {
-            {
-                put(1, new Message(1, 1, "Yo", 1, "x^2 + 3x + 7"));
-                put(2, new Message(2, 2, "whats up", 2, "none"));
-                put(3, new Message(3, 2, "u good", 1, "none"));
-                put(4, new Message(4, 1, "my b", 1, "none"));
-            }
-        };
-    }
-    public Collection<Message> getAllMessages() {
-        return messages.values();
+    @Autowired
+    public MessageDao(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Message getMessageById(int id) {
-        return messages.get(id);
+//    public static Map<Integer, Message> messages;
+//
+//    static {
+//        messages = new HashMap<Integer, Message>() {
+//            {
+//                put(1, new Message(1, 1, "Yo", 1, "x^2 + 3x + 7"));
+//                put(2, new Message(2, 2, "whats up", 2, "none"));
+//                put(3, new Message(3, 2, "u good", 1, "none"));
+//                put(4, new Message(4, 1, "my b", 1, "none"));
+//            }
+//        };
+//    }
+    public List<Message> getAllMessages(){
+        String sql = "" +
+                "SELECT " +
+                " id, " +
+                " senderId, " +
+                " content, " +
+                " assignmentId, " +
+                " eq " +
+                "FROM message";
+
+        return jdbcTemplate.query(sql, mapMessageFromDb());
     }
 
-    public Collection<Message> getMessageByAssignment(int assignmentId) {
-        Collection<Message> messagesRaw = messages.values();
-        Collection<Message> messagesParse = new LinkedList<Message>();
-        for(Message i : messagesRaw ) {
-            if(i.getAssignmentId() == assignmentId) {
-                messagesParse.add(i);
-            }
-        }
-        return messagesParse;
+    private RowMapper<Message> mapMessageFromDb() {
+        return (resultSet, i) ->
+                new Message(
+                        resultSet.getInt("id"),
+                        resultSet.getInt("senderId"),
+                        resultSet.getString("content"),
+                        resultSet.getInt("assignmentId"),
+                        resultSet.getString("eq")
+                        );
     }
 
-    public void deleteMessageById(int id) {
-        messages.remove(id);
+    public List<Message> getMessageById(int id) {
+        String sql = "" +
+                "SELECT " +
+                " id, " +
+                " senderId, " +
+                " assignmentId, " +
+                " content, " +
+                " eq " +
+                " FROM message " +
+                " WHERE id = ?";
+        return jdbcTemplate.query(sql, mapMessageFromDb(), id);
     }
 
-    public void updateMessageById(Message message) {
-        Message messageToUpdate = messages.get(message.getId());
-        messageToUpdate.setAssignmentId(message.getAssignmentId());
-        messageToUpdate.setSenderId(message.getSenderId());
-        messageToUpdate.setContent(message.getContent());
-        messageToUpdate.setEq(message.getEq());
-        messages.put(message.getId(), message);
+    public List<Message> getMessageByAssignment(int assignmentId) {
+        String sql = "" +
+                "SELECT " +
+                " id, " +
+                " senderId, " +
+                " assignmentId, " +
+                " content, " +
+                " eq " +
+                " FROM message" +
+                " WHERE assignmentId = ?";
+
+        return jdbcTemplate.query(sql, mapMessageFromDb(), assignmentId);
     }
 
-    public void addMessage(Message message) {
-        messages.put(message.getId(), message);
+    public int deleteMessageById(int id) {
+        String sql = "" +
+                "DELETE FROM message " +
+                "WHERE id = ?";
+        return jdbcTemplate.update(sql, id);
+    }
+
+    public int updateMessageById(Message message) {
+        String sql = "" +
+                "UPDATE message " +
+                "SET senderId = ? " +
+                ",assignmentId = ?" +
+                ",content = ?" +
+                ",eq = ?" +
+                "WHERE id = ?";
+        return jdbcTemplate.update(sql,
+                message.getSenderId(),
+                message.getAssignmentId(),
+                message.getContent(),
+                message.getEq(),
+                message.getId()
+        );
+    }
+
+    public int addMessage(Message message) {
+        String sql = "" +
+                "INSERT INTO message (" +
+                " senderId, " +
+                " assignmentId, " +
+                " content, " +
+                " eq) " +
+                "VALUES (?, ?, ?, ?)";
+        return jdbcTemplate.update(
+                sql,
+                message.getSenderId(),
+                message.getAssignmentId(),
+                message.getContent(),
+                message.getEq()
+        );
     }
 }

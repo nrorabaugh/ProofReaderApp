@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("/messages")
@@ -16,12 +17,12 @@ public class MessageController {
     private MessageService messageService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public Collection<Message> getAllMessage() {
+    public List<Message> getAllMessage() {
         return messageService.getAllMessages();
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public Message getMessageById(@PathVariable("id") int id) {
+    public List<Message> getMessageById(@PathVariable("id") int id) {
         return messageService.getMessageById(id);
     }
 
@@ -31,7 +32,7 @@ public class MessageController {
     }
 
     @RequestMapping(value = "/assignment/{assId}", method = RequestMethod.GET)
-    public Collection<Message> getMessagesByAssignment(@PathVariable("assId") int assignmentId) {
+    public List<Message> getMessagesByAssignment(@PathVariable("assId") int assignmentId) {
         return messageService.getMessagesByAssignment(assignmentId);
     }
 

@@ -5,20 +5,20 @@ import com.proofreader.server.Entity.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
+import java.util.List;
 
 @Service
 public class MessageService {
     @Autowired
     private MessageDao dao;
 
-    public Collection<Message> getAllMessages() {
+    public List<Message> getAllMessages() {
         return this.dao.getAllMessages();
     }
 
-    public Collection<Message> getMessagesByAssignment(int assignmentId) { return this.dao.getMessageByAssignment(assignmentId); }
+    public List<Message> getMessagesByAssignment(int assignmentId) { return this.dao.getMessageByAssignment(assignmentId); }
 
-    public Message getMessageById(int id) {
+    public List<Message> getMessageById(int id) {
         return this.dao.getMessageById(id);
     }
 

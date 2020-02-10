@@ -34,11 +34,11 @@ public class ClassroomDao {
         this.classrooms.remove(id);
     }
 
-    public void updateClassroomById(Classroom assignment) {
-        Classroom classToUpdate = classrooms.get(assignment.getId());
-        classToUpdate.setTeacherId(assignment.getTeacherId());
-        classToUpdate.setName(assignment.getName());
-        classrooms.put(assignment.getId(), assignment);
+    public void updateClassroomById(Classroom classroom) {
+        Classroom classToUpdate = classrooms.get(classroom.getId());
+        classToUpdate.setTeacherId(classroom.getTeacherId());
+        classToUpdate.setName(classroom.getName());
+        classrooms.put(classroom.getId(), classroom);
     }
 
     public void addClassroom(Classroom classroom) {

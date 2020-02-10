@@ -1,0 +1,5 @@
+CREATE TABLE classroom (
+    id SERIAL NOT NULL PRIMARY KEY,
+    teacherId INT NOT NULL,
+    name VARCHAR(80) NOT NULL
+)
