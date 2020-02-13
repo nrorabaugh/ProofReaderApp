@@ -9,7 +9,7 @@ export default class Message extends Component {
     componentDidMount() {
         Axios.get(`/users/${this.props.senderId}`)
         .then((res) => {
-            this.setState({sender: res.data})
+            this.setState({sender: res.data[0]})
         })
     }
     render() {
