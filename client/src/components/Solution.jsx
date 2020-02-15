@@ -40,6 +40,7 @@ export default class Solution extends Component {
                 userId: JSON.parse(localStorage.getItem("loggedInUser")).id,
                 content: evt.target.expression.value
             } 
+            this.setState({solution})
             Axios.post('/solutions', solution)
             this.setState({submitted: true})
         } else {
@@ -58,6 +59,12 @@ export default class Solution extends Component {
     }
 
     calculationField = () => {
+        if(this.state.solution.questionId !== undefined){
+            Axios.get(`/solutions/question/${this.state.solution.questionId}`)
+            .then((res) => {
+                console.log(res)
+            })
+        }
         let toggle = !this.state.calculationField
         this.setState({calculationField: toggle})
     }

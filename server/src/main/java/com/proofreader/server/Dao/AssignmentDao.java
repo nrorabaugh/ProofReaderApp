@@ -52,6 +52,18 @@ public class AssignmentDao {
         return jdbcTemplate.query(sql, mapAssignmentFromDb(), id);
     }
 
+    public List<Assignment> getAssignmentByName(String name) {
+        String sql = "" +
+                "SELECT " +
+                " id, " +
+                " classId, " +
+                " name, " +
+                " description " +
+                " FROM assignment " +
+                " WHERE name = ?";
+        return jdbcTemplate.query(sql, mapAssignmentFromDb(), name);
+    }
+
     public List<Assignment> getAssignmentsByClass(int classId) {
         String sql = "" +
                 "SELECT " +

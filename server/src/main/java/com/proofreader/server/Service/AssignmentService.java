@@ -21,6 +21,10 @@ public class AssignmentService {
         return this.dao.getAssignmentById(id);
     }
 
+    public List<Assignment> getAssignmentByName(String name) {
+        return this.dao.getAssignmentByName(name);
+    }
+
     public List<Assignment> getAssignmentsByClass(int classId) { return this.dao.getAssignmentsByClass(classId); }
 
     public void deleteAssignmentById(int id) {

@@ -52,6 +52,17 @@ public class ClassroomDao {
         return jdbcTemplate.query(sql, mapClassroomFromDb(), id);
     }
 
+    public List<Classroom> getClassroomByTeacher(int teacherId) {
+        String sql = "" +
+                "SELECT " +
+                " id, " +
+                " teacherId, " +
+                " name " +
+                " FROM classroom " +
+                " WHERE teacherId = ?";
+        return jdbcTemplate.query(sql, mapClassroomFromDb(), teacherId);
+    }
+
     public int deleteClassroomById(int id) {
         String sql = "" +
                 "DELETE FROM classroom " +

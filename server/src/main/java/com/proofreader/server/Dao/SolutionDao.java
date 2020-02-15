@@ -125,7 +125,8 @@ public class SolutionDao {
                 solution.getAssignmentId(),
                 solution.getUserId(),
                 solution.getContent(),
-                solution.isCorrect()
+                solution.isCorrect(),
+                solution.getId()
         );
     }
 

@@ -19,13 +19,16 @@ export default class AssignmentView extends Component {
    }
  
    componentDidMount() {
-       const { match: { params } } = this.props
+       let { match: { params } } = this.props
        Axios.get(`/assignments/${params.id}`)
        .then((res) => {
            this.setState({assignment: res.data[0]})
        })
        Axios.get(`/questions/assignment/${params.id}`)
        .then((response) => {
+        response.data.sort((a, b) => {
+            return a.number-b.number
+        })
            this.setState({questions: response.data, currentQuestion: response.data[0]})
        })
        Axios.get(`/messages/assignment/${params.id}`)

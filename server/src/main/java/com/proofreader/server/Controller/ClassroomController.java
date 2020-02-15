@@ -26,6 +26,11 @@ public class ClassroomController {
         return classroomService.getClassroomById(id);
     }
 
+    @RequestMapping(value="/teacher/{id}", method = RequestMethod.GET)
+    public List<Classroom> getClassroomByTeacher(@PathVariable("id") int id) {
+        return classroomService.getClassroomByTeacher(id);
+    }
+
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public void deleteClassroomById(@PathVariable("id") int id) {
         classroomService.deleteClassroomById(id);

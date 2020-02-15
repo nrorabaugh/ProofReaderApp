@@ -22,6 +22,8 @@ public class ClassroomService {
         return this.dao.getClassroomById(id);
     }
 
+    public List<Classroom> getClassroomByTeacher(int id) { return this.dao.getClassroomByTeacher(id); }
+
     public void deleteClassroomById(int id) {
         this.dao.deleteClassroomById(id);
     }

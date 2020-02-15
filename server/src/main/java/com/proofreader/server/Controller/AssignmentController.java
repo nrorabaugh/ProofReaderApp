@@ -26,6 +26,11 @@ public class AssignmentController {
         return assignmentService.getAssignmentById(id);
     }
 
+    @RequestMapping(value = "/name/{name}", method = RequestMethod.GET)
+    public List<Assignment> getAssignmentByName(@PathVariable("name") String name) {
+        return assignmentService.getAssignmentByName(name);
+    }
+
     @RequestMapping(value = "/class/{id}", method = RequestMethod.GET)
     public List<Assignment> getAssignmentsByClass(@PathVariable("id") int id) {
         return assignmentService.getAssignmentsByClass(id);

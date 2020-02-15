@@ -58,12 +58,19 @@ html, body {
   width: 600px;
   height: 500px;
   border: solid red 3px;
+  position: relative;
+}
+
+.switchButtonBar {
+  position: absolute;
+  bottom: 10px;
 }
 
 .chat {
   width: 400px;
   height: 500px;
   border: solid red 3px;
+  position: relative;
 }
 
 .assignmentThumb p {
@@ -83,4 +90,87 @@ html, body {
   background-color: blue;
   width: 300px;
   height: 250px;
+}
+
+#messageInput {
+  width: 100%;
+  position: absolute;
+  bottom: 10px;
+}
+
+#messageInputBox {
+  width: 300px;
+}
+
+.calcContent {
+  padding: 0;
+  margin: 0;
+}
+
+.calcWrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.question {
+  border: solid red 1px;
+}
+
+.calculation {
+  padding: 10px 10px;
+  display: inline-block;
+  min-width: 75%;
+  margin: 5px;
+  background-color: bisque;
+}
+
+#calcFieldButton {
+  display: block;
+  margin: 0 auto;
+}
+
+.solutionWrap {
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+.column {
+  width: 30vw;
+  padding: 0;
+  margin: 0;
+}
+
+.solutionBox {
+  position: relative;
+  margin: 10px auto;
+  padding: 10px;
+  background-color: red;
+  width: 28vw;
+  height: min-content;
+  text-align: left;
+}
+
+.solutionContent {
+  margin: 0;
+  padding: 0;
+}
+
+.buttonFloat {
+  position: absolute;
+  right: 6px;
+  bottom: 30px;
+}
+
+.buttonFloat2 {
+  position: absolute;
+  right: 6px;
+  bottom: 4px;
+}
+
+.calculations {
+  display: none;
+  height: 50px;
+  background-color: pink;
 }

@@ -46,7 +46,8 @@ export default class Login extends Component {
 
     render() {
         let href = null
-        if(this.state.loggedInUser) {href = `/class/${this.state.loggedInUser.classId}`}
+        if(this.state.loggedInUser && this.state.loggedInUser.role==="teacher") {href = `/admin/class/${this.state.loggedInUser.classId}`}
+        if(this.state.loggedInUser && this.state.loggedInUser.role==="student") {href = `/class/${this.state.loggedInUser.classId}`}
         return (
             <div>
                 { this.state.loggedInUser? <Redirect to={href}/> :

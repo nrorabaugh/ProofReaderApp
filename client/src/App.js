@@ -4,6 +4,9 @@ import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 import AssignmentView from './components/AssignmentView'
 import ClassView from './components/ClassView'
 import Login from './components/Login'
+import TeacherClassView from './components/TeacherClassView';
+import TeacherAssignmentView from './components/TeacherAssignmentView';
+import AddAssignment from './components/AddAssignment';
 function App() {
 
   return (
@@ -17,7 +20,12 @@ function App() {
         <Route path="/class/:id">
           <ClassView/>
         </Route>
+        <Route path="/admin/class/:id">
+          <TeacherClassView/>
+        </Route>
+        <Route path="/admin/addAssignment/:classId" component={AddAssignment}/>
         <Route path="/assignment/:id" component={AssignmentView}/>
+        <Route path="/admin/assignment/:id" component={TeacherAssignmentView}/>
       </Switch>
     </div>
     </Router>
