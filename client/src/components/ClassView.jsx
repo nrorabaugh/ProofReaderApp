@@ -8,7 +8,8 @@ export default class Classview extends Component {
         assignments: [],
         assignmentToRedirect: null,
         user: null,
-        listening: []
+        listening: [],
+        percentage: 0
     }
 
     componentDidMount() {
@@ -24,7 +25,23 @@ export default class Classview extends Component {
             this.setState({assignments: res.data})
         })
         // localStorage.clear()
+        Axios.get(`/solutions/student/${user.id}`)
+        .then((res) => {
+            console.log(res)
+            let correct = 0
+            for(let i=0; i<res.data.length; i++) {
+                console.log(correct)
+                if(res.data[i].correct === true) {
+                    correct +=1
+                    console.log('+1')
+                }
+            }
+            let frac = (correct/res.data.length) * 100
+            document.getElementsByClassName('correctbar')[0].style.width = `${frac}%`
+        })
     }
+
+
 
     render() {
         let assignmentsMap = this.state.assignments.map((assignment, index) => {
@@ -40,7 +57,9 @@ export default class Classview extends Component {
                         {assignmentsMap}
                     </div>
                     <div className='scorecard'>
-
+                        <div className='scorebar'>
+                            <div className='correctbar'></div>
+                        </div>
                     </div>
                 </div>
             </div>

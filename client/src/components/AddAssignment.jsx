@@ -45,21 +45,6 @@ export default class addAssignment extends Component {
         this.setState({questionForm: true})
     }
 
-    submitQuestion = (evt) => {
-        evt.preventDefault()
-        let remapIndex = this.state.remapIndex + 1
-        this.setState({remapIndex})
-        let question = {
-            assignmentId: this.state.assignment.id,
-            number: evt.target.number.value,
-            content: evt.target.content.value,
-            solution: evt.target.solution.value
-        }
-        Axios.post('/questions', question)
-        let questions = this.state.questions
-        this.setState({questions})
-    }
-
     render() {
         let remapIndex = this.state.remapIndex
         let questMap = this.state.questions.map((question, index) => {

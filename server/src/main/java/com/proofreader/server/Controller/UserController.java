@@ -26,6 +26,11 @@ public class UserController {
         return userService.getUserById(id);
     }
 
+    @RequestMapping(value = "/username:{username}/password:{password}", method = RequestMethod.GET)
+    public List<User> getUserByCred(@PathVariable("username") String username, @PathVariable("password") String password) {
+        return userService.getUserByCred(username, password);
+    }
+
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public void deleteUserById(@PathVariable("id") int id) {
         userService.deleteUserById(id);

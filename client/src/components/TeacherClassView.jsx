@@ -15,7 +15,6 @@ export default class TeacherClassView extends Component {
         Axios.get(`/classrooms/teacher/${user.id}`)
         .then((res) => {
             this.setState({classData: res.data[0]})
-            localStorage.setItem("currentClass", res.data)
         })
         Axios.get(`/assignments/class/${user.classId}`)
         .then((res) => {
@@ -43,8 +42,9 @@ export default class TeacherClassView extends Component {
                         {assignmentsMap}
                     </div>
                     <div className='scorecard'>
-                        
+
                     </div>
+                    <button onClick={() => { console.log(this.state)}}>State</button>
                 </div>
             </div>
         )

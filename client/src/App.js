@@ -7,6 +7,7 @@ import Login from './components/Login'
 import TeacherClassView from './components/TeacherClassView';
 import TeacherAssignmentView from './components/TeacherAssignmentView';
 import AddAssignment from './components/AddAssignment';
+import NewUser from './components/NewUser';
 function App() {
 
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/admin/class/:id">
           <TeacherClassView/>
         </Route>
+        <Route path="/signup" component={NewUser}/>
         <Route path="/admin/addAssignment/:classId" component={AddAssignment}/>
         <Route path="/assignment/:id" component={AssignmentView}/>
         <Route path="/admin/assignment/:id" component={TeacherAssignmentView}/>

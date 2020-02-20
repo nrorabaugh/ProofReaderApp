@@ -100,6 +100,22 @@ export default class AssignmentView extends Component {
    addSolution = () => {
        this.setState({viewer: 'solution'})
    }
+
+   submitAssignment = () => {
+       Axios.get(`/solutions/student/${JSON.parse(localStorage.getItem("loggedInUser")).id}`)
+       .then((res) => {
+           for(let i=0; i<res.data.length; i++){
+               Axios.get(`/questions/${res.data[i].questionId}`)
+               .then((response) => {
+                if(res.data[i].content === response.data[0].solution){
+                    let newSolution = res.data[i]
+                    newSolution.correct = true
+                    Axios.put('/solutions', newSolution)
+                }
+               })
+           }
+       })
+   }
  
    render() {
        let messagesMap = this.state.messages.map((message, index) =>{
@@ -119,7 +135,7 @@ export default class AssignmentView extends Component {
                        />
                        {this.state.first? null : <button onClick={this.prevQuestion}>Previous Question</button>}
                        <button id="addSolution" onClick={this.addSolution}>{this.state.solutionButtonState}</button>
-                       {this.state.last? null : <button onClick={this.nextQuestion}>Next Question</button>}
+                       {this.state.last? <button onClick={this.submitAssignment}>Submit Assignment</button> : <button onClick={this.nextQuestion}>Next Question</button>}
                        </div> : null}
                        {this.state.viewer === 'graphing'? <div><GraphingCalculator/>
                        </div> : null}

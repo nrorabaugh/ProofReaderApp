@@ -1,15 +1,19 @@
 import React, { Component } from 'react'
 import Axios from 'axios'
 import SolutionThumbnail from './SolutionThumbnail'
+import Message from './Message'
 
 export default class TeacherAssignmentView extends Component {
 
     state = {
+        view: 'solutions',
         assignment: {},
         solutions: [],
         questions: [],
         solutionsToShow: [[],[],[]],
         users: [],
+        messages: [],
+        messagesToShow: [],
         remapIndex: 0
     }
 
@@ -58,14 +62,50 @@ export default class TeacherAssignmentView extends Component {
         Axios.get(`/questions/assignment/${params.id}`)
         .then((res) => {
             this.setState({questions: res.data})
-            for(let i = 0; i<res.data.length; i++) {
-                let select = document.getElementById('byQuestion')
-                let option = document.createElement('option')
-                option.setAttribute('value', res.data[i].id.toString())
-                option.innerText = res.data[i].number
-                select.add(option)
-            } 
+            // let select = document.getElementById('byQuestion')
+            // for(let i = 0; i<res.data.length; i++) {
+            //     let option = document.createElement('option')
+            //     option.setAttribute('value', res.data[i].id.toString())
+            //     option.innerText = res.data[i].number
+            //     select.add(option)
+            // } 
         })
+        Axios.get(`/messages/assignment/${params.id}`)
+        .then((res) => {
+            this.setState({messages: res.data, messagesToShow: res.data})
+        })
+    }
+
+    componentDidUpdate() {
+        if(this.state.view === 'messages') {
+            let select = document.getElementById('byUser')
+            if(select.innerText === "All"){
+            for(let i = 0; i < this.state.users.length; i++) {
+                let option = document.createElement('option')
+                option.setAttribute('value', this.state.users[i].id.toString())
+                option.innerText = this.state.users[i].username
+                select.add(option)
+                }            
+            }
+        }
+        if(this.state.view === 'solutions') {
+            let select = document.getElementById('byQuestion')
+            if(select.innerText === "All"){
+                for(let i = 0; i<this.state.questions.length; i++) {
+                    let option = document.createElement('option')
+                    option.setAttribute('value', this.state.questions[i].id.toString())
+                    option.innerText = this.state.questions[i].number
+                    select.add(option)
+                }
+            }
+            let selectUser = document.getElementById('byUser')
+            for(let i = 0; i < this.state.users.length; i++) {
+                let option = document.createElement('option')
+                option.setAttribute('value', this.state.users[i].id.toString())
+                option.innerText = this.state.users[i].username
+                selectUser.add(option)
+            }     
+        }
     }
 
     findByUser = () => {
@@ -106,6 +146,40 @@ export default class TeacherAssignmentView extends Component {
         }
     }
 
+    searchMessages = (evt) => {
+        evt.preventDefault()
+        let messagesToShow = []
+        this.setState({messagesToShow})
+        let query = evt.target.messageQuery.value.split(' ')
+        for(let i=0; i<this.state.messages.length; i++){
+            for(let o=0; o<query.length; o++){
+                if(this.state.messages[i].content.includes(query[o]) && messagesToShow.indexOf(this.state.messages[i]) === -1){
+                    messagesToShow.push(this.state.messages[i])
+                }
+            }
+        }
+        this.setState({messagesToShow})
+    }
+
+    findMessagesByUser = () => {
+        let messagesToShow = []
+        let userQuery = document.getElementById('byUser').value
+        if(userQuery === 'all'){
+            this.setState({messagesToShow: this.state.messages})
+            return
+        }
+        for(let i =0; i<this.state.messages.length; i++) {
+            if(this.state.messages[i].senderId.toString() === userQuery){
+                messagesToShow.push(this.state.messages[i])
+            }
+        }
+        this.setState({messagesToShow})
+    }
+
+    switchView = (evt) => {
+        this.setState({view: evt.target.id})
+    }
+
     render() {
         let remapIndex = this.state.remapIndex
         let solutionsMap1 = this.state.solutionsToShow[0].map((solution, index) => {
@@ -129,10 +203,19 @@ export default class TeacherAssignmentView extends Component {
             questionId={solution.questionId}
             />
         })
+
+        let messagesMap = this.state.messagesToShow.map((message, index) => {
+            return <Message key={index + (remapIndex*this.state.messages.length)} senderId={message.senderId} content={message.content}/>
+        })
         return (
             <div>
                 <h1>Teacher Assignment View</h1>
-                <select id='byQuestion' onChange={this.findByUser}>
+                <nav>
+                    <button onClick={this.switchView} id='solutions'>Solutions</button>
+                    <button onClick={this.switchView} id='messages'>Messages</button>
+                </nav>
+                {this.state.view === 'solutions'?
+                <div><select id='byQuestion' onChange={this.findByUser}>
                     <option value='all'>All</option>
                 </select>
                 <select id='byUser' onChange={this.findByUser}>
@@ -142,7 +225,21 @@ export default class TeacherAssignmentView extends Component {
                     <div className='column'>{solutionsMap1}</div>
                     <div className='column'>{solutionsMap2}</div>
                     <div className='column'>{solutionsMap3}</div>
+                </div> 
+                </div> : null }
+                {this.state.view === 'messages'?
+                <div>
+                <form onSubmit={this.searchMessages}>
+                    <input type='text' name='messageQuery' placeholder='Keywords to search'></input>
+                    <input type='submit' value='Search'/>
+                </form>
+                <select id='byUser' onChange={this.findMessagesByUser}>
+                    <option value='all'>All</option>
+                </select>
+                <div>
+                    {messagesMap}
                 </div>
+                </div> : null }
             </div>
         )
     }

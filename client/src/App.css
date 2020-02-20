@@ -174,3 +174,28 @@ html, body {
   height: 50px;
   background-color: pink;
 }
+
+.calcTable {
+  position: absolute;
+  left: 10px;
+}
+
+#calcInput{
+  text-align: right;
+}
+
+.scorebar {
+  width: 80%;
+  background-color: red;
+  padding: 0;
+  margin: auto;
+  height: 10px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.correctbar {
+  height: 100%;
+  margin: 0;
+  background-color: green;
+}
