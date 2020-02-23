@@ -96,7 +96,7 @@ public class AssignmentDao {
                 assignment.getName(),
                 assignment.getDescription(),
                 assignment.getId()
-                );
+        );
     }
 
     public int addAssignment(Assignment assignment) {

@@ -13,7 +13,9 @@ export default class AssignmentThumbnail extends Component {
         update: false,
         questions: [],
         remapIndex: -1,
-        addQuestion: false
+        addQuestion: false,
+        percentInt: undefined,
+        percent: undefined
     }
 
     componentDidMount() {
@@ -23,6 +25,25 @@ export default class AssignmentThumbnail extends Component {
                 return a.number-b.number
             })
             this.setState({questions: res.data})
+        })
+        Axios.get(`/solutions/student/${JSON.parse(localStorage.getItem('loggedInUser')).id}`)
+        .then((res) => {
+            let correct = 0
+            let total = 0
+            for(let i=0; i<res.data.length; i++){
+                if(res.data[i].submitted === true){
+                    document.getElementsByClassName('submittedData')[0].style.display = 'flex'
+                    if(this.state.assignment.id === res.data[i].assignmentId){
+                        total+=1
+                        if(res.data[i].correct === true){
+                            correct+=1
+                        }
+                    }
+                }
+            }
+            let percent = ((correct/total)*100).toString() + "%"
+            document.getElementsByClassName('correctbar')[0].style.width = percent
+            this.setState({percent: `${correct}/${total}`, percentInt: (correct/total)})
         })
     }
 
@@ -61,7 +82,6 @@ export default class AssignmentThumbnail extends Component {
         Axios.post('/questions', question)
         let questions = this.state.questions
         questions.push(question)
-        questions.push(question)
         questions.sort((a, b) => {
             return a.number-b.number
         })
@@ -79,9 +99,14 @@ export default class AssignmentThumbnail extends Component {
         })
         return (
             <div>
-                <a href={href}>
+                <a href={href} className='assignment'>
                 <div className='assignmentThumb'>
-                    <p>{this.state.assignment.name}</p>   
+                    <p>{this.state.assignment.name}</p> 
+                    <em className='subtitle'>{this.state.questions.length} Questions</em>  
+                    <div className='submittedData'>
+                        <p>{this.state.percent}</p>
+                        <div className='scorebar'><div className='correctbar'></div></div>
+                    </div>
                 </div>
                 </a>
                 {role === 'teacher'? <button onClick = {this.update}>{this.state.update?"Cancel" : "Update Assignment"}</button>:null}
@@ -94,9 +119,9 @@ export default class AssignmentThumbnail extends Component {
                             {questMap}
                         </div>
                         <button onClick={this.addQuestion}>{this.state.addQuestion? "Cancel":"Add A Question"}</button>
-                        {this.state.addQuestion? <form onSubmit={this.submitQuestion}>
+                        {this.state.addQuestion? <form className='vertForm' onSubmit={this.submitQuestion}>
                         <input type='text' name='number' placeholder='Number'></input>
-                        <input type='text' name='content' placeholder='Prompt'></input>
+                        <textarea type='text' name='content' placeholder='Prompt'></textarea>
                         <input type='text' name='solution' placeholder='Answer'></input>
                         <input type='submit' value='Add Question'></input>
                         </form> : null}

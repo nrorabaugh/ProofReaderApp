@@ -24,6 +24,8 @@ public class UserService {
 
     public List<User> getUserByCred(String username, String password) { return this.userDao.getUserByCred(username, password); }
 
+    public List<User> getUsername(String username) { return this.userDao.getUsername(username); }
+
     public void deleteUserById(int id) {
         this.userDao.deleteUserById(id);
     }

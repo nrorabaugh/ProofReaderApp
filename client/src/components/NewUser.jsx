@@ -32,8 +32,16 @@ export default class NewUser extends Component {
             classId: 0,
             role: "teacher"
         }
-        Axios.post('/users', teacher)
-        this.setState({user: teacher, status: 'class'})
+        Axios.get(`/users/extant/${teacher.username}`)
+        .then((res) => {
+            if(res.data[0] !== undefined) {
+                alert("Username taken")
+            }
+            if(res.data[0] === undefined) {
+                Axios.post('/users', teacher)
+                this.setState({user: teacher, status: 'class'})
+            }
+        })
     }
 
     createStudent = (evt) => {
@@ -88,31 +96,36 @@ export default class NewUser extends Component {
         return (
             <div>
                 {this.state.status === null? 
-                <div><h1>What are you?</h1>
+                <div><div className='banner'><h1>What are you?</h1></div>
                     <button id="teacher" onClick={this.setStatus}>Teacher</button>
                     <button id="student" onClick={this.setStatus}>Student</button>
                 </div> : null}
                 {this.state.status === 'teacher'?
-                    <form onSubmit={this.createTeacher}>
+                <div>
+                    <div className='banner'><h1>Choose your Credentials</h1></div>
+                    <form className='vertForm' onSubmit={this.createTeacher}>
                         <input type='text' name='username' placeholder='Username'></input>
                         <input type='password' name='password' placeholder='Password'></input>
                         <input type='submit' value='Sign Up'></input>
-                    </form> : null}
+                    </form> </div>: null}
                 {this.state.status === 'class'?
-                    <form onSubmit={this.createClass}>
+                <div><div className='banner'><h1>Create your Class</h1></div>
+                    <form className='vertForm' onSubmit={this.createClass}>
                         <input type='text' name='className' placeholder='Your Class Name'></input>
                         <input type='submit' value='Create Class'/>
-                    </form> : null}
+                    </form> </div>: null}
                 {this.state.class.id === undefined? null : <Redirect to={href}></Redirect> }
                 {this.state.joined? <Redirect to={studentHref}></Redirect> : null}
                 {this.state.status === 'student'? <div>
-                    <form onSubmit={this.findClass}>
+                    <div className='banner'><h1>Find your Class</h1></div>
+                    <form className='vertForm'onSubmit={this.findClass}>
                         <input type='text' name='classId' placeholder='Your Class ID'></input>
                         <input type='submit' value='Find Class'></input>
                     </form>
                 </div> : null}
                 {this.state.status === 'studentJoin'? <div>
-                    <form onSubmit={this.createStudent}>
+                    <div className='banner'><h1>{this.state.exClass.name}</h1><h1>Choose your Credentials</h1></div>
+                    <form className='vertForm' onSubmit={this.createStudent}>
                         <input type='text' name='username' placeholder='Username'></input>
                         <input type='password' name='password' placeholder='Password'></input>
                         <input type='submit' value='Create Account'></input>

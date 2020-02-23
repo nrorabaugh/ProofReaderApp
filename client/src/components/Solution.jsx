@@ -31,27 +31,27 @@ export default class Solution extends Component {
 
     addSolution = (evt) => {
         evt.preventDefault()
-        console.log('event prevent')
         if(this.state.solution.content === undefined) {
-            console.log('posting')
-            let solution = {
-                questionId: this.props.question.id,
-                assignmentId: this.props.question.assignmentId,
-                userId: JSON.parse(localStorage.getItem("loggedInUser")).id,
-                content: evt.target.expression.value
-            } 
-            this.setState({solution})
-            Axios.post('/solutions', solution)
-            this.setState({submitted: true})
-        } else {
-            console.log(this.state.solution)
             let solution = {
                 correct: false,
                 questionId: this.props.question.id,
                 assignmentId: this.props.question.assignmentId,
                 userId: JSON.parse(localStorage.getItem("loggedInUser")).id,
+                content: evt.target.expression.value,
+                submitted: false
+            } 
+            this.setState({solution})
+            Axios.post('/solutions', solution)
+            this.setState({submitted: true})
+        } else {
+            let solution = {
+                questionId: this.props.question.id,
+                assignmentId: this.props.question.assignmentId,
+                userId: JSON.parse(localStorage.getItem("loggedInUser")).id,
                 id: this.state.solution.id,
-                content: evt.target.expression.value
+                content: evt.target.expression.value,
+                correct: false,
+                submitted: false
             }   
             Axios.put('/solutions', solution)
             this.setState({submitted: true})
@@ -62,6 +62,7 @@ export default class Solution extends Component {
         if(this.state.solution.questionId !== undefined){
             Axios.get(`/solutions/question/${this.state.solution.questionId}`)
             .then((res) => {
+                this.setState({solution: res.data[0]})
                 console.log(res)
             })
         }
@@ -76,12 +77,21 @@ export default class Solution extends Component {
             expression: evt.target.calcExpression.value,
             comment: evt.target.comment.value
         }
-        Axios.post('/calculations', calculation)        
+        Axios.post('/calculations', calculation)
+        setTimeout(() => {
+            Axios.get(`/calculations/solution/${this.state.solution.id}`)
+            .then((res) => {
+                res.data.sort((a, b) => {
+                    return a.id - b.id
+                })
+                this.setState({calculations: res.data})
+            })
+        }, 100)
     }
 
     render() {
         let calcMap = this.state.calculations.map((calculation, index) => {
-            return <Calculation  key = {index} id = {calculation.id} expression = {calculation.expression} comment = {calculation.comment}/>
+            return <Calculation  key = {index} id = {calculation.id}/>
         })
         return (
             <div>

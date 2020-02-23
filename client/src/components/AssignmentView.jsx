@@ -31,10 +31,10 @@ export default class AssignmentView extends Component {
         })
            this.setState({questions: response.data, currentQuestion: response.data[0]})
        })
-       Axios.get(`/messages/assignment/${params.id}`)
+       setInterval(()=>{Axios.get(`/messages/assignment/${params.id}`)
        .then((res) => {
            this.setState({messages: res.data})
-       })
+       })}, 200)
        this.getQuestionSolution()
    }
    
@@ -42,12 +42,13 @@ export default class AssignmentView extends Component {
     let id = JSON.parse(localStorage.getItem("loggedInUser")).id
     Axios.get(`/solutions/student/${id}`)
     .then((res) => {
-        for(let i=0; i<res.data.length; i++){
-            if(res.data[i].questionId === this.state.currentQuestion.id) {
-                this.setState({solutionButtonState: "Edit Your Solution"})
-                return
-             }
-        }
+        if(this.state.currentQuestion !== undefined){
+            for(let i=0; i<res.data.length; i++){
+                if(res.data[i].questionId === this.state.currentQuestion.id) {
+                    this.setState({solutionButtonState: "Edit Your Solution"})
+                    return
+                }
+            }}
         this.setState({solutionButtonState: "Submit a Solution"})
     })
    }
@@ -95,6 +96,7 @@ export default class AssignmentView extends Component {
            eq: null
        }
        Axios.post('/messages', message)
+       evt.target.messageValue.value = ''
    }
 
    addSolution = () => {
@@ -105,13 +107,14 @@ export default class AssignmentView extends Component {
        Axios.get(`/solutions/student/${JSON.parse(localStorage.getItem("loggedInUser")).id}`)
        .then((res) => {
            for(let i=0; i<res.data.length; i++){
-               Axios.get(`/questions/${res.data[i].questionId}`)
+                let newSolution = res.data[i]
+                newSolution.submitted = true               
+                Axios.get(`/questions/${res.data[i].questionId}`)
                .then((response) => {
                 if(res.data[i].content === response.data[0].solution){
-                    let newSolution = res.data[i]
                     newSolution.correct = true
-                    Axios.put('/solutions', newSolution)
                 }
+                Axios.put('/solutions', newSolution)
                })
            }
        })
@@ -123,31 +126,33 @@ export default class AssignmentView extends Component {
        })
        return (
            <div>
-               <div className='header'>
-                   <p>{this.state.assignment? this.state.assignment.name : null}</p>
+               <div className='banner'>
+                   <h1>{this.state.assignment? this.state.assignment.name : null}</h1>
                </div>
                <div className='assignmentContent'>
                    <div className = 'switch'>
-                       {this.state.viewer === 'question'? <div><Question
+                       {this.state.questions[0] === undefined? <h2>This assignment currently has no questions.</h2> : null}
+                       {this.state.questions[0] !== undefined && this.state.viewer === 'question'? <div><Question
                        number={this.state.currentQuestion.number}
                        content={this.state.currentQuestion.content}
                        solution={this.state.currentQuestion.solution}
-                       />
+                       /><div className='position'>
                        {this.state.first? null : <button onClick={this.prevQuestion}>Previous Question</button>}
                        <button id="addSolution" onClick={this.addSolution}>{this.state.solutionButtonState}</button>
                        {this.state.last? <button onClick={this.submitAssignment}>Submit Assignment</button> : <button onClick={this.nextQuestion}>Next Question</button>}
-                       </div> : null}
+                       </div></div> : null}
                        {this.state.viewer === 'graphing'? <div><GraphingCalculator/>
                        </div> : null}
                        {this.state.viewer === 'solution'? <div><Solution question={this.state.currentQuestion}/>
                        </div> : null}
                        {this.state.viewer === 'calculator'? <div><Calculator/>
                        </div> : null}
-                       <div className='switchButtonBar'>
-                           <button id='question' onClick={this.switchView}>Questions</button>
-                           <button id='calculator' onClick={this.switchView}>Calculator</button>
-                           <button id='graphing' onClick={this.switchView}>Graphing Calculator</button>
-                       </div>
+                       {this.state.questions[0] !== undefined?
+                        <div className='switchButtonBar'>
+                            <button id='question' onClick={this.switchView}>Questions</button>
+                            <button id='calculator' onClick={this.switchView}>Calculator</button>
+                            <button id='graphing' onClick={this.switchView}>Graphing Calculator</button>
+                        </div> : null}
                    </div>
                    <div className = 'chat'>
                        {messagesMap}

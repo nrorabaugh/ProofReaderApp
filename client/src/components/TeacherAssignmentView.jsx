@@ -32,13 +32,13 @@ export default class TeacherAssignmentView extends Component {
     }
     
     componentDidMount() {
+        let userIds = []
+        let users = []
         let { match: { params } } = this.props
         Axios.get(`/solutions/assignment/${params.id}`)
         .then((res) => {
             this.setState({solutions: res.data})
             this.stsProcess(res.data)
-            let userIds = []
-            let users = []
             for(let i=0; i<this.state.solutions.length; i++) {
                 if(userIds.indexOf(this.state.solutions[i].userId) === -1) {
                     userIds.push(this.state.solutions[i].userId)
@@ -53,7 +53,6 @@ export default class TeacherAssignmentView extends Component {
                     })
                 } 
             }
-            this.setState({users})
         })
         Axios.get(`/assignments/${params.id}`)
         .then((res) => {
@@ -62,18 +61,26 @@ export default class TeacherAssignmentView extends Component {
         Axios.get(`/questions/assignment/${params.id}`)
         .then((res) => {
             this.setState({questions: res.data})
-            // let select = document.getElementById('byQuestion')
-            // for(let i = 0; i<res.data.length; i++) {
-            //     let option = document.createElement('option')
-            //     option.setAttribute('value', res.data[i].id.toString())
-            //     option.innerText = res.data[i].number
-            //     select.add(option)
-            // } 
         })
         Axios.get(`/messages/assignment/${params.id}`)
         .then((res) => {
+            for(let i=0; i<res.data.length; i++) {
+                if(userIds.indexOf(res.data[i].senderId) === -1) {
+                    userIds.push(res.data[i].senderId)
+                    Axios.get(`/users/${res.data[i].senderId}`)
+                    .then((res) => {
+                        users.push(res.data[0])
+                        let select = document.getElementById('byUser')
+                        let option = document.createElement('option')
+                        option.setAttribute('value', res.data[0].id.toString())
+                        option.innerText = res.data[0].username
+                        select.add(option)
+                    })
+                } 
+            }
             this.setState({messages: res.data, messagesToShow: res.data})
         })
+        this.setState({users})
     }
 
     componentDidUpdate() {
@@ -99,12 +106,14 @@ export default class TeacherAssignmentView extends Component {
                 }
             }
             let selectUser = document.getElementById('byUser')
-            for(let i = 0; i < this.state.users.length; i++) {
-                let option = document.createElement('option')
-                option.setAttribute('value', this.state.users[i].id.toString())
-                option.innerText = this.state.users[i].username
-                selectUser.add(option)
-            }     
+            if(selectUser.innerText==='All'){
+                for(let i = 0; i < this.state.users.length; i++) {
+                    let option = document.createElement('option')
+                    option.setAttribute('value', this.state.users[i].id.toString())
+                    option.innerText = this.state.users[i].username
+                    selectUser.add(option)
+                }  
+            }   
         }
     }
 
@@ -162,6 +171,8 @@ export default class TeacherAssignmentView extends Component {
     }
 
     findMessagesByUser = () => {
+        let remapIndex = this.state.remapIndex + 1
+        this.setState({remapIndex})
         let messagesToShow = []
         let userQuery = document.getElementById('byUser').value
         if(userQuery === 'all'){
@@ -209,7 +220,7 @@ export default class TeacherAssignmentView extends Component {
         })
         return (
             <div>
-                <h1>Teacher Assignment View</h1>
+                <div className='banner'><h1>{this.state.assignment === undefined? 'New Assignment' : this.state.assignment.name}</h1></div>
                 <nav>
                     <button onClick={this.switchView} id='solutions'>Solutions</button>
                     <button onClick={this.switchView} id='messages'>Messages</button>

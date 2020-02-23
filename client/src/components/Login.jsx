@@ -14,8 +14,12 @@ export default class Login extends Component {
         evt.preventDefault()
         Axios.get(`/users/username:${this.state.currentUserHandle}/password:${this.state.currentPasswordHandle}`)
         .then((res) => {
-            localStorage.setItem("loggedInUser", JSON.stringify(res.data[0]))
-            this.setState({loggedInUser: res.data[0]})
+            if(res.data[0] === undefined) {
+                document.getElementById('incorrect').style.color = 'red'
+            } else {
+                localStorage.setItem("loggedInUser", JSON.stringify(res.data[0]))
+                this.setState({loggedInUser: res.data[0]})
+            }
         })
     }
     
@@ -36,9 +40,12 @@ export default class Login extends Component {
         return (
             <div>
                 { this.state.loggedInUser? <Redirect to={href}/> :
-                <div><form onSubmit={this.login}>
-                    <input type='text' name='username' autoComplete='off' placeholder='Username' onChange={this.userHandle}/>
-                    <input type='password' name='password' autoComplete='off' placeholder='Password' onChange={this.passwordHandle}/>
+                <div>
+                    <div className='banner'><h1>ProofReader</h1></div>
+                    <form className='userAccess' onSubmit={this.login}>
+                    <p id='incorrect'>Incorrect username or password</p>
+                    <input className='uaInput' type='text' name='username' autoComplete='off' placeholder='Username' onChange={this.userHandle}/>
+                    <input className='uaInput' type='password' name='password' autoComplete='off' placeholder='Password' onChange={this.passwordHandle}/>
                     <input className='submit' type='submit' value='Enter'/>
                 </form>  
                 <a href='/signup'>New User?</a>

@@ -4,5 +4,6 @@ CREATE TABLE solution (
     assignmentId INT NOT NULL,
     userId INT NOT NULL,
     content VARCHAR NOT NULL,
-    correct BOOLEAN NOT NULL DEFAULT FALSE
+    correct BOOLEAN NOT NULL DEFAULT FALSE,
+    submitted BOOLEAN NOT NULL DEFAULT FALSE
 )

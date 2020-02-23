@@ -15,10 +15,10 @@ export default class TeacherClassView extends Component {
         Axios.get(`/classrooms/teacher/${user.id}`)
         .then((res) => {
             this.setState({classData: res.data[0]})
-        })
-        Axios.get(`/assignments/class/${user.classId}`)
-        .then((res) => {
-            this.setState({assignments: res.data})
+            Axios.get(`/assignments/class/${res.data[0].id}`)
+            .then((res) => {
+                this.setState({assignments: res.data})
+            })
         })
         // localStorage.clear()
     }
@@ -33,18 +33,12 @@ export default class TeacherClassView extends Component {
         }
         return (
             <div>
-                <div className='header'>
-                    <p>{this.state.classData? this.state.classData.name : 'Class'}</p>
-                    <a href={href}>Add Assignment</a>
-                </div>
+                <div className='banner'><h1>{this.state.classData? this.state.classData.name : 'Class'}</h1>
+                <a href={href}>Add Assignment</a></div>
                 <div className='pageWrapper'>
                     <div className='assignmentList'>
                         {assignmentsMap}
                     </div>
-                    <div className='scorecard'>
-
-                    </div>
-                    <button onClick={() => { console.log(this.state)}}>State</button>
                 </div>
             </div>
         )

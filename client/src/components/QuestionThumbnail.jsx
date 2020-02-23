@@ -33,13 +33,13 @@ export default class QuestionThumbnail extends Component {
         let role = JSON.parse(localStorage.getItem("loggedInUser")).role
         return (
             <div className='question'>
-                <h1>{this.state.question.number}</h1>
+                <h1>#{this.state.question.number}</h1>
                 <p>{this.state.question.content}</p>
-                <p>{this.state.question.solution}</p>
+                <p>Answer: {this.state.question.solution}</p>
                 {role === 'teacher'? <button onClick={this.update}>{this.state.update? "Cancel" : "Edit Question"}</button> : null}
-                {this.state.update? <form onSubmit={this.updateQuestion}>
+                {this.state.update? <form className='vertForm' onSubmit={this.updateQuestion}>
                     <input type='text' name='number' defaultValue={this.props.number}></input>
-                    <input type='text' name='content' defaultValue={this.props.content}></input>
+                    <textarea type='text' name='content' defaultValue={this.props.content}></textarea>
                     <input type='text' name='solution' defaultValue={this.props.solution}></input>
                     <input type='submit' value='Update Question'></input>
                 </form> : null }

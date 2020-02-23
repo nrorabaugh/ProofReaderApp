@@ -9,7 +9,8 @@ export default class Classview extends Component {
         assignmentToRedirect: null,
         user: null,
         listening: [],
-        percentage: 0
+        percentage: 0,
+        grade: false
     }
 
     componentDidMount() {
@@ -24,20 +25,24 @@ export default class Classview extends Component {
         .then((res) => {
             this.setState({assignments: res.data})
         })
-        // localStorage.clear()
         Axios.get(`/solutions/student/${user.id}`)
         .then((res) => {
-            console.log(res)
+            if(res.data[0] !== undefined){
+            this.setState({grade: true})
             let correct = 0
+            let total = 0
             for(let i=0; i<res.data.length; i++) {
-                console.log(correct)
+                if(res.data[i].submitted === true) {
+                    total += 1
+                }
                 if(res.data[i].correct === true) {
                     correct +=1
-                    console.log('+1')
                 }
             }
-            let frac = (correct/res.data.length) * 100
-            document.getElementsByClassName('correctbar')[0].style.width = `${frac}%`
+            let frac = (correct/total) * 100
+            document.getElementsByClassName('grade')[0].innerText = `${frac}%`
+            document.getElementsByClassName('total')[0].style.width = frac + '%'
+        }
         })
     }
 
@@ -49,18 +54,18 @@ export default class Classview extends Component {
         })
         return (
             <div>
-                <div className='header'>
-                    <p>{this.state.classData? this.state.classData.name : 'Class'}</p>
-                </div>
+                <div className='banner'><h1>{this.state.classData? this.state.classData.name : 'Class'}</h1></div>
                 <div className='pageWrapper'>
                     <div className='assignmentList'>
                         {assignmentsMap}
                     </div>
+                    {this.state.grade? 
                     <div className='scorecard'>
+                    <div className='gradehead'>Homework Average: <p className='grade'></p></div>
                         <div className='scorebar'>
-                            <div className='correctbar'></div>
+                            <div className='correctbar total'></div>
                         </div>
-                    </div>
+                    </div> : null}
                 </div>
             </div>
         )

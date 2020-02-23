@@ -27,7 +27,8 @@ public class SolutionDao {
                 " assignmentId, " +
                 " userId, " +
                 " content, " +
-                " correct " +
+                " correct, " +
+                " submitted " +
                 "FROM solution" ;
 
         return jdbcTemplate.query(sql, mapSolutionFromDb());
@@ -41,7 +42,8 @@ public class SolutionDao {
                         resultSet.getInt("assignmentId"),
                         resultSet.getInt("userId"),
                         resultSet.getString("content"),
-                        resultSet.getBoolean("correct")
+                        resultSet.getBoolean("correct"),
+                        resultSet.getBoolean("submitted")
                 );
     }
 
@@ -53,7 +55,8 @@ public class SolutionDao {
                 " assignmentId, " +
                 " userId, " +
                 " content, " +
-                " correct " +
+                " correct, " +
+                " submitted " +
                 " FROM solution " +
                 " WHERE id = ?";
         return jdbcTemplate.query(sql, mapSolutionFromDb(), id);
@@ -67,7 +70,8 @@ public class SolutionDao {
                 " assignmentId, " +
                 " userId, " +
                 " content, " +
-                " correct " +
+                " correct, " +
+                " submitted " +
                 " FROM solution " +
                 " WHERE userId = ?";
 
@@ -82,7 +86,8 @@ public class SolutionDao {
                 " assignmentId, " +
                 " userId, " +
                 " content, " +
-                " correct " +
+                " correct, " +
+                " submitted " +
                 " FROM solution " +
                 " WHERE questionId = ?";
 
@@ -97,7 +102,8 @@ public class SolutionDao {
                 " assignmentId, " +
                 " userId, " +
                 " content, " +
-                " correct " +
+                " correct, " +
+                " submitted " +
                 " FROM solution " +
                 " WHERE assignmentId = ?";
 
@@ -119,6 +125,7 @@ public class SolutionDao {
                 ",userId = ?" +
                 ",content = ?" +
                 ",correct = ?" +
+                ",submitted = ?" +
                 "WHERE id = ?";
         return jdbcTemplate.update(sql,
                 solution.getQuestionId(),
@@ -126,6 +133,7 @@ public class SolutionDao {
                 solution.getUserId(),
                 solution.getContent(),
                 solution.isCorrect(),
+                solution.isSubmitted(),
                 solution.getId()
         );
     }
@@ -137,14 +145,16 @@ public class SolutionDao {
                 " assignmentId, " +
                 " userId, " +
                 " content, " +
-                " correct)" +
-                "VALUES (?, ?, ?, ?, ?)";
+                " correct, " +
+                " submitted)" +
+                "VALUES (?, ?, ?, ?, ?, ?)";
         return jdbcTemplate.update(sql,
                 solution.getQuestionId(),
                 solution.getAssignmentId(),
                 solution.getUserId(),
                 solution.getContent(),
-                solution.isCorrect()
+                solution.isCorrect(),
+                solution.isSubmitted()
         );
     }
 }

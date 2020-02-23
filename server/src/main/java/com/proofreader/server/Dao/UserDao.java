@@ -59,6 +59,19 @@ public class UserDao {
         return jdbcTemplate.query(sql, mapUserFromDb(), id);
     }
 
+    public List<User> getUsername(String name) {
+        String sql = "" +
+                "SELECT " +
+                " id, " +
+                " classId, " +
+                " username, " +
+                " password, " +
+                " role " +
+                " FROM users " +
+                " WHERE username = ?";
+        return jdbcTemplate.query(sql, mapUserFromDb(), name);
+    }
+
     public List<User> getUserByCred(String username, String password) {
         String sql = "" +
                 "SELECT " +
